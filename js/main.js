@@ -53,7 +53,27 @@ function update() {
     }
 
     snake.unshift(head);
-    snake.pop();
+
+    // Food collision
+    if (head.x === food.x && head.y === food.y) {
+        score++;
+        scoreElement.textContent = score;
+        generateFood();
+    } else {
+        snake.pop();
+    }
+
+    // Wall collision
+    if (head.x < 0 || head.x >= BOARD_WIDTH || head.y < 0 || head.y >= BOARD_HEIGHT) {
+        gameOver();
+    }
+
+    // Self collision
+    for (let i = 1; i < snake.length; i++) {
+        if (head.x === snake[i].x && head.y === snake[i].y) {
+            gameOver();
+        }
+    }
 }
 
 function drawBoard() {
@@ -103,3 +123,10 @@ document.addEventListener('keydown', e => {
         direction = 'right';
     }
 });
+
+function gameOver() {
+    clearInterval(gameInterval);
+    alert('Game Over! Your score: ' + score);
+    // For simplicity, we'll just reload the page to restart
+    document.location.reload();
+}

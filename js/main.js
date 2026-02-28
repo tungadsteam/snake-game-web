@@ -35,7 +35,25 @@ generateFood();
 let gameInterval;
 
 function update() {
-    // Placeholder
+    const head = { ...snake[0] };
+
+    switch (direction) {
+        case 'up':
+            head.y--;
+            break;
+        case 'down':
+            head.y++;
+            break;
+        case 'left':
+            head.x--;
+            break;
+        case 'right':
+            head.x++;
+            break;
+    }
+
+    snake.unshift(head);
+    snake.pop();
 }
 
 function drawBoard() {
@@ -67,3 +85,21 @@ function main() {
 }
 
 gameInterval = setInterval(main, 100);
+
+document.addEventListener('keydown', e => {
+    const key = e.key;
+    const goingUp = direction === 'up';
+    const goingDown = direction === 'down';
+    const goingLeft = direction === 'left';
+    const goingRight = direction === 'right';
+
+    if (key === 'ArrowUp' && !goingDown) {
+        direction = 'up';
+    } else if (key === 'ArrowDown' && !goingUp) {
+        direction = 'down';
+    } else if (key === 'ArrowLeft' && !goingRight) {
+        direction = 'left';
+    } else if (key === 'ArrowRight' && !goingLeft) {
+        direction = 'right';
+    }
+});

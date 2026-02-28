@@ -30,3 +30,40 @@ function generateFood() {
 
 // Initial food generation
 generateFood();
+
+// Game loop
+let gameInterval;
+
+function update() {
+    // Placeholder
+}
+
+function drawBoard() {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawSnake() {
+    ctx.fillStyle = 'green';
+    snake.forEach(segment => {
+        ctx.fillRect(segment.x * TILE_SIZE, segment.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    });
+}
+
+function drawFood() {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(food.x * TILE_SIZE, food.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+}
+
+function draw() {
+    drawBoard();
+    drawSnake();
+    drawFood();
+}
+
+function main() {
+    update();
+    draw();
+}
+
+gameInterval = setInterval(main, 100);

@@ -20,21 +20,26 @@ let snake = [
 let food = {};
 let score = 0;
 let direction = 'right';
+let gameOverFlag = false;
+
+function isPositionOnSnake(position) {
+    return snake.some(segment => segment.x === position.x && segment.y === position.y);
+}
 
 function generateFood() {
-    food = {
-        x: Math.floor(Math.random() * BOARD_WIDTH),
-        y: Math.floor(Math.random() * BOARD_HEIGHT)
-    };
+    do {
+        food = {
+            x: Math.floor(Math.random() * BOARD_WIDTH),
+            y: Math.floor(Math.random() * BOARD_HEIGHT)
+        };
+    } while (isPositionOnSnake(food));
 }
 
 // Initial food generation
 generateFood();
 
-// Game loop
-let gameInterval;
-
 function update() {
+    if (gameOverFlag) return;
     const head = { ...snake[0] };
 
     switch (direction) {
@@ -65,13 +70,13 @@ function update() {
 
     // Wall collision
     if (head.x < 0 || head.x >= BOARD_WIDTH || head.y < 0 || head.y >= BOARD_HEIGHT) {
-        gameOver();
+        gameOverFlag = true;
     }
 
     // Self collision
     for (let i = 1; i < snake.length; i++) {
         if (head.x === snake[i].x && head.y === snake[i].y) {
-            gameOver();
+            gameOverFlag = true;
         }
     }
 }
@@ -99,12 +104,29 @@ function draw() {
     drawFood();
 }
 
-function main() {
+// Game loop
+let lastTime = 0;
+const gameSpeed = 100; // ms per update
+
+function mainLoop(currentTime) {
+    if (gameOverFlag) {
+        alert('Game Over! Your score: ' + score);
+        document.location.reload();
+        return;
+    }
+
+    window.requestAnimationFrame(mainLoop);
+
+    const timeSinceLastRender = currentTime - lastTime;
+    if (timeSinceLastRender < gameSpeed) return;
+    
+    lastTime = currentTime;
+
     update();
     draw();
 }
 
-gameInterval = setInterval(main, 100);
+window.requestAnimationFrame(mainLoop);
 
 document.addEventListener('keydown', e => {
     const key = e.key;
@@ -123,10 +145,3 @@ document.addEventListener('keydown', e => {
         direction = 'right';
     }
 });
-
-function gameOver() {
-    clearInterval(gameInterval);
-    alert('Game Over! Your score: ' + score);
-    // For simplicity, we'll just reload the page to restart
-    document.location.reload();
-}
